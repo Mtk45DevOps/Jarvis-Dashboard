@@ -46,4 +46,4 @@ Coming Soon
 
 ## Project Status
 
-🚧 In Development
+ - In Development
