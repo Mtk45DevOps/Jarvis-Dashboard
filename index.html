@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#090a0c" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="JARVIS" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icons/jarvis-mark.svg" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>JARVIS — Trading Control</title>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand" aria-label="JARVIS Trading Control">
+          <img src="icons/jarvis-mark.svg" alt="" />
+          <div><span class="eyebrow">TRADING CONTROL</span><strong>JARVIS</strong></div>
+        </div>
+        <button class="icon-button" id="refreshButton" type="button" aria-label="Refresh dashboard" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8.1 8.1 0 0 0-14.9-4.3L3 9m0-5v5h5m-4 4a8.1 8.1 0 0 0 14.9 4.3L21 15m0 5v-5h-5" /></svg>
+        </button>
+      </header>
+
+      <section class="connection-banner" aria-live="polite">
+        <span class="status-dot" id="connectionDot"></span>
+        <span id="connectionText">No verified API route configured</span>
+        <button id="detailsButton" type="button">Details</button>
+      </section>
+
+      <div class="views">
+        <section class="view active" data-view="overview" aria-labelledby="overviewTitle">
+          <div class="heading-row"><div><p class="section-kicker">JARVIS COMMAND CENTER</p><h1 id="overviewTitle">Control room</h1></div><time id="localTime"></time></div>
+          <article class="hero-card metal-card">
+            <div class="hero-topline"><span class="online-pill"><i></i> SERVICE STATUS</span><span>JARVIS // 01</span></div>
+            <div class="hero-body"><div><div class="card-label">TRADING INTELLIGENCE</div><strong class="unavailable-value">Standby</strong><p>Live status becomes available only after a verified service route is connected.</p></div><div class="bot-core" aria-hidden="true"><span></span><b>J</b></div></div>
+            <div class="hero-action-row"><span>NO COMMAND ROUTE</span><span class="arrow-mark">↗</span></div>
+          </article>
+          <div class="metric-grid" aria-label="Portfolio metrics">
+            <article class="metric-card"><span>Day P/L</span><strong>—</strong><small>Awaiting integration</small></article>
+            <article class="metric-card"><span>Open positions</span><strong>—</strong><small>Awaiting integration</small></article>
+            <article class="metric-card"><span>Buying power</span><strong>—</strong><small>Awaiting integration</small></article>
+            <article class="metric-card"><span>Server state</span><strong>—</strong><small>Awaiting integration</small></article>
+          </div>
+          <section class="panel intelligence-panel"><div class="panel-heading"><h2>Session intelligence</h2><span>AWAITING DATA</span></div><div class="signal-row"><span class="signal-mark">⌁</span><div><strong>Signal feed unavailable</strong><p>No market feed is connected. JARVIS does not estimate or simulate trading data.</p></div></div></section>
+        </section>
+
+        <section class="view" data-view="positions" aria-labelledby="positionsTitle">
+          <div class="heading-row"><div><p class="section-kicker">PORTFOLIO</p><h1 id="positionsTitle">Positions</h1></div></div>
+          <section class="panel"><div class="panel-heading"><h2>Open positions</h2><span id="positionsCount">NO ROUTE</span></div><div class="empty-state"><span class="empty-symbol">◫</span><h3>Positions unavailable</h3><p>An existing, verified positions endpoint is required before holdings can appear here.</p></div></section>
+        </section>
+
+        <section class="view" data-view="history" aria-labelledby="historyTitle">
+          <div class="heading-row"><div><p class="section-kicker">ACTIVITY</p><h1 id="historyTitle">History</h1></div></div>
+          <section class="panel"><div class="panel-heading"><h2>Recent activity</h2><span>NO ROUTE</span></div><div class="empty-state"><span class="empty-symbol">↗</span><h3>History unavailable</h3><p>No verified trade-history response format has been provided. No sample transactions are shown.</p></div></section>
+        </section>
+
+        <section class="view" data-view="control" aria-labelledby="controlTitle">
+          <div class="heading-row"><div><p class="section-kicker">AUTOMATION</p><h1 id="controlTitle">Control</h1></div></div>
+          <article class="control-status metal-card"><div><span class="card-label">TRADING SERVICE</span><strong>State unknown</strong><p>Start and stop controls remain locked until their exact authorized API routes are verified.</p></div><span class="locked-badge">LOCKED</span></article>
+          <section class="action-stack" aria-label="Trading service actions">
+            <button class="action-button primary" type="button" disabled><span>Start trading service</span><small>Requires verified endpoint</small></button>
+            <button class="action-button" type="button" disabled><span>Stop trading service</span><small>Requires verified endpoint</small></button>
+          </section>
+          <p class="safety-note"><span>◆</span> Actions will never be enabled from a guessed route. Configuration stays outside the app bundle.</p>
+        </section>
+
+        <section class="view" data-view="system" aria-labelledby="systemTitle">
+          <div class="heading-row"><div><p class="section-kicker">SETUP</p><h1 id="systemTitle">System</h1></div></div>
+          <section class="panel integration-panel"><div class="panel-heading"><h2>API integration</h2><span>NOT CONFIGURED</span></div>
+            <div class="integration-row"><span>Public API base URL</span><strong id="baseUrlValue">Not configured</strong></div>
+            <div class="integration-row"><span>Secrets in this app</span><strong>Never stored</strong></div>
+            <div class="integration-row"><span>Verified endpoint mappings</span><strong id="routeCount">0</strong></div>
+          </section>
+          <section class="panel guide-panel"><h2>Connect verified routes</h2><ol><li>Copy <code>config.example.js</code> to <code>config.js</code>.</li><li>Set only the public API URL and routes confirmed in your AWS Console.</li><li>Define the exact method and response mapping for each capability.</li><li>Deploy the static app over HTTPS. Do not put AWS keys, passwords, or session tokens in the app.</li></ol></section>
+        </section>
+      </div>
+
+      <nav class="tabbar" aria-label="Primary navigation">
+        <button class="tab active" data-target="overview" type="button"><span>⌂</span>Home</button>
+        <button class="tab" data-target="positions" type="button"><span>◫</span>Positions</button>
+        <button class="tab" data-target="history" type="button"><span>↗</span>History</button>
+        <button class="tab" data-target="control" type="button"><span>◉</span>Control</button>
+        <button class="tab" data-target="system" type="button"><span>⋮</span>System</button>
+      </nav>
+    </main>
+    <dialog id="detailsDialog"><form method="dialog"><button class="dialog-close" aria-label="Close">×</button><p class="section-kicker">INTEGRATION BOUNDARY</p><h2>Live data is intentionally off</h2><p>No API Gateway paths, request methods, authentication rules, or response shapes were available for verification. The dashboard therefore makes no network requests and cannot send start/stop commands.</p><p>Provide the existing public base URL plus each approved route, method, authentication approach, and a redacted example response to enable a capability safely.</p><button class="dialog-button">Understood</button></form></dialog>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "JARVIS Trading Control",
+  "short_name": "JARVIS",
+  "description": "A secure mobile control surface for verified trading-service APIs.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#090a0c",
+  "theme_color": "#090a0c",
+  "icons": [{ "src": "icons/jarvis-mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
