@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "jarvis-shell-v7";
+const CACHE_NAME = "lex-shell-v8";
 const ASSETS = [
   "./",
   "./index.html",
@@ -7,7 +7,7 @@ const ASSETS = [
   "./app.js",
   "./config.js",
   "./manifest.webmanifest",
-  "./icons/jarvis-mark.svg"
+  "./icons/lex-dragon.svg"
 ];
 
 self.addEventListener("install", (event) => {
@@ -22,7 +22,7 @@ self.addEventListener("activate", (event) => {
     const keys = await caches.keys();
     await Promise.all(
       keys
-        .filter((key) => key.startsWith("jarvis-shell-") && key !== CACHE_NAME)
+        .filter((key) => (key.startsWith("jarvis-shell-") || key.startsWith("lex-shell-")) && key !== CACHE_NAME)
         .map((key) => caches.delete(key))
     );
     await self.clients.claim();
