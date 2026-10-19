@@ -95,3 +95,82 @@ dialog p:not(.section-kicker){color:#ccc}
 .signals-shortcut:focus-visible{outline:2px solid #eee;outline-offset:3px}
 .signals-shortcut.active{background:#e0e0e0;color:#080808;border-color:#fff}
 @media(min-width:431px){body{background-color:#050505}.app-shell{border-left-color:#303030;border-right-color:#303030}}
+
+
+/* LEX dragon identity: premium obsidian, graphite and brushed silver. */
+:root{
+  --bg:#07090c;
+  --surface:#11151a;
+  --line:#454c56;
+  --muted:#a7afb9;
+  --text:#f4f6f8;
+  --silver:#d8dde4;
+  --accent:#c5ccd5;
+}
+body{
+  background:
+    radial-gradient(ellipse at 82% -5%,#353b45 0,transparent 32rem),
+    radial-gradient(ellipse at 0 40%,#171b21 0,transparent 25rem),
+    var(--bg);
+}
+.brand img{
+  filter:drop-shadow(0 0 9px #cbd2dc55);
+}
+.eyebrow,.section-kicker{color:#b8c0ca}
+.signals-shortcut{
+  border:1px solid #59616c!important;
+  background:linear-gradient(135deg,#242a32,#101318)!important;
+  color:#e5e9ee!important;
+  border-radius:10px!important;
+}
+.metal-card{
+  background:linear-gradient(135deg,#303640 0%,#14181e 48%,#252b33 100%);
+  border-color:#707985;
+  box-shadow:inset 0 1px #ffffff20,0 0 0 1px #ffffff08,0 15px 35px #00000070;
+}
+.hero-card:before{
+  background:linear-gradient(116deg,transparent 38%,#ffffff0b 39%,transparent 40%,transparent 58%,#ffffff0b 59%,transparent 60%);
+}
+.bot-core{
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  border:1px solid #89919c;
+  border-radius:48% 48% 43% 43%;
+  background:radial-gradient(circle at 50% 35%,#454c57 0,#171b21 66%);
+  box-shadow:inset 0 0 22px #ffffff12,0 0 24px #cbd2dc17;
+}
+.bot-core:before,.bot-core:after,.bot-core span,.bot-core b{display:none}
+.bot-core img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  padding:5px;
+  filter:drop-shadow(0 0 7px #e3e7ed22);
+}
+.metric-card,.panel{
+  border-color:#3d444e;
+}
+.panel-heading span,.locked-badge{
+  border-color:#565e69;
+  background:#20252c;
+  color:#dce1e7;
+}
+.signal-mark{
+  color:#e0e5eb;
+  background:#20252b;
+  border-color:#565e69;
+}
+.tabbar{
+  background:#0b0e12ed;
+  border-top-color:#3c434d;
+}
+.tab.active span{color:#e1e5eb;filter:drop-shadow(0 0 6px #ffffff30)}
+.dialog-button{
+  background:linear-gradient(135deg,#e2e6eb,#aab2bd);
+  color:#090b0e;
+}
+@media (prefers-reduced-motion:reduce){
+  .view.active{animation:none}
+}
