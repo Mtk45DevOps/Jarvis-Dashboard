@@ -54,6 +54,25 @@
           </section>
         </section>
 
+
+        <section class="view" data-view="signals" aria-labelledby="signalsTitle">
+          <div class="heading-row"><div><p class="section-kicker">STRATEGY OUTPUT</p><h1 id="signalsTitle">Signals</h1></div><span class="feed-status" id="signalFeedState">WAITING FOR EA</span></div>
+          <section class="panel signal-feed-panel">
+            <div class="panel-heading"><h2>Strategy signal feed</h2><span id="signalCount">0 SIGNALS</span></div>
+            <p class="feed-explainer">Signals appear here only when the existing MT5 strategy publishes a confirmed setup. This screen does not create signals or place orders.</p>
+            <div class="market-filter" role="group" aria-label="Filter signals by market">
+              <button class="market-filter-button active" type="button" data-signal-market="all">All markets</button>
+              <button class="market-filter-button" type="button" data-signal-market="synthetics">Synthetics</button>
+              <button class="market-filter-button" type="button" data-signal-market="forex">Forex</button>
+              <button class="market-filter-button" type="button" data-signal-market="gold">Gold</button>
+            </div>
+            <div id="signalCards" class="signal-cards" aria-live="polite">
+              <div class="empty-state"><span class="empty-symbol">⌁</span><h3>Signal feed not connected</h3><p>The current API returns account telemetry, not strategy signals. Connect the EA signal publisher and API response before live setups can appear here.</p></div>
+            </div>
+          </section>
+          <p class="safety-note"><span>◆</span> Signal display only. Order execution remains disabled during development and testing.</p>
+        </section>
+
         <section class="view" data-view="positions" aria-labelledby="positionsTitle">
           <div class="heading-row"><div><p class="section-kicker">PORTFOLIO</p><h1 id="positionsTitle">Positions</h1></div></div>
           <section class="panel"><div class="panel-heading"><h2>Open positions</h2><span id="positionsCount">NO ROUTE</span></div><div class="empty-state"><span class="empty-symbol">◫</span><h3>Positions unavailable</h3><p>An existing, verified positions endpoint is required before holdings can appear here.</p></div></section>
@@ -87,6 +106,7 @@
 
       <nav class="tabbar" aria-label="Primary navigation">
         <button class="tab active" data-target="overview" type="button"><span>⌂</span>Home</button>
+        <button class="tab" data-target="signals" type="button"><span>⌁</span>Signals</button>
         <button class="tab" data-target="positions" type="button"><span>◫</span>Positions</button>
         <button class="tab" data-target="history" type="button"><span>↗</span>History</button>
         <button class="tab" data-target="control" type="button"><span>◉</span>Control</button>
