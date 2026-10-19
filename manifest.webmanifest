@@ -4,7 +4,7 @@
   "description": "LEX signal dashboard for verified MT5 strategy signals and trading telemetry.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#090a0c",
-  "theme_color": "#090a0c",
-  "icons": [{ "src": "icons/jarvis-mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+  "background_color": "#07090c",
+  "theme_color": "#07090c",
+  "icons": [{ "src": "icons/lex-dragon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
 }
