@@ -1,7 +1,7 @@
 {
-  "name": "JARVIS Trading Control",
-  "short_name": "JARVIS",
-  "description": "A secure mobile control surface for verified trading-service APIs.",
+  "name": "LEX Trading Control",
+  "short_name": "LEX",
+  "description": "LEX signal dashboard for verified MT5 strategy signals and trading telemetry.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#090a0c",
