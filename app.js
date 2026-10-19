@@ -6,7 +6,7 @@
   const baseUrl = (config.apiBaseUrl || "").replace(/\/+$/, "");
   const statusRoute = endpoints.status;
   const HEARTBEAT_STALE_MS = 90_000;
-  const REFRESH_INTERVAL_MS = 15_000;
+  const REFRESH_INTERVAL_MS = 5_000;
 
   const $ = (selector) => document.querySelector(selector);
   const statusText = $("#connectionText");
@@ -68,7 +68,7 @@
     setText(".unavailable-value", "API Offline");
     setText(".hero-action-row span:first-child", "API CONNECTION FAILED");
     setServerCard("Offline", "Could not verify API");
-    renderSignals([]);
+    renderSignals(lastTelemetry && Array.isArray(lastTelemetry.signals) ? lastTelemetry.signals : []);
     setText("#heartbeatHeadline", "Could not refresh EATRADE status");
     setText("#heartbeatNote", "Previously received metrics, if any, are retained until a new response is available.");
   }
@@ -256,7 +256,7 @@
     }
   }
 
-  document.querySelectorAll(".tab, .signals-shortcut").forEach((tab) => {
+  document.querySelectorAll(".tab").forEach((tab) => {
     tab.addEventListener("click", () => {
       const target = tab.dataset.target;
       document.querySelectorAll(".view").forEach((view) => {
@@ -264,9 +264,6 @@
       });
       document.querySelectorAll(".tab").forEach((item) => {
         item.classList.toggle("active", item.dataset.target === target);
-      });
-      document.querySelectorAll(".signals-shortcut").forEach((item) => {
-        item.classList.toggle("active", item === tab && tab.classList.contains("signals-shortcut"));
       });
     });
   });
@@ -285,7 +282,6 @@
 
   refreshButton.disabled = false;
   refreshButton.addEventListener("click", refreshStatus);
-  $("#detailsButton").addEventListener("click", () => $("#detailsDialog").showModal());
 
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) refreshStatus();
