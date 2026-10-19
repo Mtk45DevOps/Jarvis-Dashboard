@@ -200,22 +200,22 @@ bool PublishSignal(SignalSetup &setup)
    string signalId=_Symbol+"_"+IntegerToString((long)signalTime)+"_"+side;
 
    string json="{"
-      "\"source\":\"jarvis-signal\","
-      "\"signal\":{"
-      "\"signal_id\":\""+JsonEscape(signalId)+"\","
-      "\"symbol\":\""+JsonEscape(_Symbol)+"\","
-      "\"market\":\""+JsonEscape(ClassifyMarket(_Symbol))+"\","
-      "\"direction\":\""+side+"\","
-      "\"strategy\":\"JARVIS SMC BOS OB Retest\","
-      "\"timeframe\":\""+EnumToString(InpEntryTF)+"\","
-      "\"bias_timeframe\":\""+EnumToString(InpBiasTF)+"\","
-      "\"entry\":"+DoubleToString(entry,digits)+","
-      "\"sl\":"+DoubleToString(sl,digits)+","
-      "\"tp\":"+DoubleToString(tp,digits)+","
-      "\"status\":\"CONFIRMED\","
-      "\"timestamp\":\""+TimeToString(TimeGMT(),TIME_DATE|TIME_SECONDS)+"Z\","
-      "\"setup_bar\":\""+TimeToString(signalTime,TIME_DATE|TIME_SECONDS)+"\""
-      "}}";
+      + "\"source\":\"jarvis-signal\","
+      + "\"signal\":{"
+      + "\"signal_id\":\""+JsonEscape(signalId)+"\","
+      + "\"symbol\":\""+JsonEscape(_Symbol)+"\","
+      + "\"market\":\""+JsonEscape(ClassifyMarket(_Symbol))+"\","
+      + "\"direction\":\""+side+"\","
+      + "\"strategy\":\"JARVIS SMC BOS OB Retest\","
+      + "\"timeframe\":\""+EnumToString(InpEntryTF)+"\","
+      + "\"bias_timeframe\":\""+EnumToString(InpBiasTF)+"\","
+      + "\"entry\":"+DoubleToString(entry,digits)+","
+      + "\"sl\":"+DoubleToString(sl,digits)+","
+      + "\"tp\":"+DoubleToString(tp,digits)+","
+      + "\"status\":\"CONFIRMED\","
+      + "\"timestamp\":\""+FormatUtc(TimeGMT())+"\","
+      + "\"setup_bar\":\""+FormatUtc(signalTime)+"\""
+      + "}}";
 
    char requestData[],responseData[];
    string headers="Content-Type: application/json\r\n";
@@ -232,6 +232,14 @@ bool PublishSignal(SignalSetup &setup)
    string responseText=CharArrayToString(responseData,0,-1,CP_UTF8);
    Print("JARVIS signal publish HTTP ",code," | ",side," ",_Symbol," | ",responseText);
    return (code>=200 && code<300);
+}
+
+string FormatUtc(datetime value)
+{
+   MqlDateTime dt;
+   TimeToStruct(value,dt);
+   return StringFormat("%04d-%02d-%02dT%02d:%02d:%02dZ",
+      dt.year,dt.mon,dt.day,dt.hour,dt.min,dt.sec);
 }
 
 string ClassifyMarket(string symbol)
