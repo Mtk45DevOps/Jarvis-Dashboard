@@ -22,3 +22,76 @@
 .signal-level-grid strong{font-size:12px;overflow-wrap:anywhere;color:#f6e4e8}
 .signal-card-foot{border-top:1px solid #3b252d;margin-top:11px;padding-top:9px;font-size:9px;color:#b99ba4}
 @media(max-width:360px){.tabbar{padding-left:4px;padding-right:4px}.tab{font-size:9px}.tab span{font-size:16px}.market-filter-button{padding:7px 8px}}
+
+
+/* JARVIS monochrome theme: black, graphite and silver across the entire interface. */
+:root{
+  color-scheme:dark;
+  --bg:#050505;
+  --surface:#111111;
+  --line:#454545;
+  --muted:#a6a6a6;
+  --text:#f5f5f5;
+  --silver:#d8d8d8;
+  --accent:#d8d8d8;
+}
+body{
+  background:radial-gradient(ellipse at 82% -5%,#292929 0,transparent 32rem),radial-gradient(ellipse at 0 40%,#181818 0,transparent 25rem),var(--bg);
+  color:var(--text);
+}
+.brand img{filter:grayscale(1) brightness(1.55) drop-shadow(0 0 8px #c9c9c944)}
+.eyebrow,.section-kicker{color:#bcbcbc}
+.icon-button{background:#171717;border-color:#555;color:#e1e1e1}
+.connection-banner{background:linear-gradient(90deg,#202020,#111);border-color:#505050;color:#d0d0d0;box-shadow:inset 0 1px #ffffff0c}
+.connection-banner button{color:#ededed}
+.metal-card{background:linear-gradient(135deg,#292929 0%,#111 48%,#202020 100%);border-color:#686868;box-shadow:inset 0 1px #ffffff18,0 0 0 1px #ffffff08,0 15px 35px #00000070}
+.hero-card:before{background:linear-gradient(116deg,transparent 38%,#ffffff08 39%,transparent 40%,transparent 58%,#ffffff08 59%,transparent 60%)}
+.hero-topline,.hero-action-row{color:#c7c7c7}
+.online-pill{border-color:#555;background:#202020;color:#e0e0e0}
+.online-pill i{background:#d0d0d0;box-shadow:0 0 10px #d0d0d066}
+.bot-core{border-color:#777;background:radial-gradient(circle at 34% 35%,#eee 0 3px,transparent 4px),radial-gradient(circle at 67% 35%,#eee 0 3px,transparent 4px),linear-gradient(140deg,#666,#171717 60%,#333);box-shadow:inset 13px 9px 18px #ffffff18,inset -9px -9px 14px #0008,0 0 20px #ffffff0b}
+.bot-core:before,.bot-core:after{background:#ddd;box-shadow:0 0 12px #ffffff55}
+.bot-core b{border-color:#888;background:#111;color:#eee;box-shadow:0 0 12px #ffffff22}
+.hero-action-row{border-top-color:#454545}
+.arrow-mark{color:#e0e0e0}
+.metric-card{border-color:#3e3e3e;background:linear-gradient(145deg,#171717,#0b0b0b)}
+.metric-card span,.metric-card small{color:#aaa}
+.metric-card strong{color:#f1f1f1}
+.panel{border-color:#414141;background:linear-gradient(145deg,#151515,#090909)}
+.panel-heading span{color:#ddd;border-color:#555;background:#202020}
+.signal-row{border-top-color:#3b3b3b}
+.signal-mark{background:#222;color:#e0e0e0;border-color:#555}
+.empty-state{color:#aaa}
+.empty-state h3{color:#f5f5f5}
+.empty-symbol{color:#ddd}
+.locked-badge{color:#e1e1e1;border-color:#666;background:#222}
+.action-button{border-color:#4b4b4b;background:#151515;color:#aaa}
+.action-button.primary{border-color:#777;background:#242424;color:#e0e0e0}
+.safety-note{color:#aaa}
+.safety-note span{color:#d5d5d5}
+.integration-row{border-top-color:#414141;color:#bdbdbd}
+.integration-row strong{color:#eee}
+.guide-panel code{color:#eee;background:#292929}
+.tabbar{background:#0b0b0bee;border-top-color:#4a4a4a}
+.tab{color:#888}
+.tab.active{color:#f3f3f3}
+.tab.active span{color:#eee;filter:drop-shadow(0 0 6px #ffffff33)}
+dialog{background:#171717;color:var(--text);border-color:#666}
+.dialog-close{color:#eee}
+.dialog-button{background:#d4d4d4;color:#090909}
+dialog p:not(.section-kicker){color:#ccc}
+.feed-status{color:#e2e2e2;border-color:#555;background:#202020}
+.feed-explainer{color:#bbb}
+.market-filter-button{border-color:#555;background:#171717;color:#c5c5c5}
+.market-filter-button.active{border-color:#ddd;background:#303030;color:#fff}
+.signal-card{border-color:#414141;background:linear-gradient(145deg,#1b1b1b,#0e0e0e)}
+.signal-side.buy,.signal-side.sell{color:#ededed;border-color:#777;background:#242424}
+.signal-timeframe{color:#bbb}
+.signal-level-grid>div{border-color:#414141}
+.signal-level-grid span{color:#aaa}
+.signal-level-grid strong{color:#f3f3f3}
+.signal-card-foot{border-top-color:#3b3b3b;color:#aaa}
+.signals-shortcut,.signals-shortcut:visited{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:0 12px;border:1px solid #777;border-radius:10px;background:linear-gradient(145deg,#303030,#171717);color:#f3f3f3;font:inherit;font-size:12px;font-weight:750;letter-spacing:.04em;text-decoration:none}
+.signals-shortcut:focus-visible{outline:2px solid #eee;outline-offset:3px}
+.signals-shortcut.active{background:#e0e0e0;color:#080808;border-color:#fff}
+@media(min-width:431px){body{background-color:#050505}.app-shell{border-left-color:#303030;border-right-color:#303030}}
