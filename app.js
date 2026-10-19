@@ -256,13 +256,17 @@
     }
   }
 
-  document.querySelectorAll(".tab").forEach((tab) => {
+  document.querySelectorAll(".tab, .signals-shortcut").forEach((tab) => {
     tab.addEventListener("click", () => {
+      const target = tab.dataset.target;
       document.querySelectorAll(".view").forEach((view) => {
-        view.classList.toggle("active", view.dataset.view === tab.dataset.target);
+        view.classList.toggle("active", view.dataset.view === target);
       });
       document.querySelectorAll(".tab").forEach((item) => {
-        item.classList.toggle("active", item === tab);
+        item.classList.toggle("active", item.dataset.target === target);
+      });
+      document.querySelectorAll(".signals-shortcut").forEach((item) => {
+        item.classList.toggle("active", item === tab && tab.classList.contains("signals-shortcut"));
       });
     });
   });
