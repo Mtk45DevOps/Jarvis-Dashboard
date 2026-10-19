@@ -3,7 +3,7 @@
 
   const config = window.JARVIS_CONFIG || {};
   const endpoints = config.endpoints || {};
-  const baseUrl = (config.apiBaseUrl || "").replace(/\\/+$/, "");
+  const baseUrl = (config.apiBaseUrl || "").replace(/\/+$/, "");
   const statusRoute = endpoints.status;
   const HEARTBEAT_STALE_MS = 90_000;
   const REFRESH_INTERVAL_MS = 15_000;
