@@ -177,3 +177,9 @@ body{
 
 /* Six primary sections: keep the mobile navigation evenly spaced. */
 .tabbar{grid-template-columns:repeat(6,minmax(0,1fr))}
+
+
+/* Compact two-tab layout: Signals and Control only. */
+.tabbar{grid-template-columns:repeat(2,minmax(0,1fr));}
+.tab{font-size:12px;gap:4px;}
+.tab span{font-size:19px;}
