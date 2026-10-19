@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title id="title">LEX silver dragon emblem</title>
+  <defs>
+    <linearGradient id="silver" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".36" stop-color="#cfd4dc"/>
+      <stop offset=".68" stop-color="#737b87"/>
+      <stop offset="1" stop-color="#f2f4f7"/>
+    </linearGradient>
+    <linearGradient id="darkSilver" x1="0" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#8d96a3"/>
+      <stop offset="1" stop-color="#333943"/>
+    </linearGradient>
+  </defs>
+  <path fill="#080a0d" d="M128 7 232 67v122l-104 60L24 189V67z"/>
+  <path fill="none" stroke="#68717d" stroke-width="2" d="M128 18 222 72v112l-94 54-94-54V72z"/>
+  <path fill="url(#silver)" d="M128 35 101 54 68 48 81 76 56 95 80 105 68 132 90 145 84 177 108 165 128 202 148 165 172 177 166 145 188 132 176 105 200 95 175 76 188 48 155 54z"/>
+  <path fill="#11151b" d="m128 57-18 25-27-12 12 28-15 17 25 5-9 24 22-12 10 26 10-26 22 12-9-24 25-5-15-17 12-28-27 12z"/>
+  <path fill="url(#darkSilver)" d="m106 91-25-9 12 22 19 8zm44 0 25-9-12 22-19 8z"/>
+  <path fill="#f1f4f8" d="m96 113 20 6-15 8zm64 0-20 6 15 8z"/>
+  <path fill="#080a0d" d="m111 130 17 8 17-8-7 20-10 9-10-9z"/>
+  <path fill="url(#silver)" d="m104 154 24 12 24-12-7 23-17 15-17-15z"/>
+  <path fill="#080a0d" d="m117 167 11 5 11-5-11 14z"/>
+  <path fill="none" stroke="#f4f6f9" stroke-opacity=".72" stroke-width="2.5" stroke-linecap="round" d="m71 66 20 15m94-15-20 15M86 151l15 13m69-13-15 13"/>
+  <path fill="url(#silver)" d="m49 85 25 10-10 13zm158 0-25 10 10 13zM103 45l25 13 25-13-11 25h-28z"/>
+</svg>
