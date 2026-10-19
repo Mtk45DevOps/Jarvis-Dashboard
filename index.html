@@ -38,13 +38,20 @@
             <div class="hero-body"><div><div class="card-label">TRADING INTELLIGENCE</div><strong class="unavailable-value">Standby</strong><p>Live status becomes available only after a verified service route is connected.</p></div><div class="bot-core" aria-hidden="true"><span></span><b>J</b></div></div>
             <div class="hero-action-row"><span>NO COMMAND ROUTE</span><span class="arrow-mark">↗</span></div>
           </article>
-          <div class="metric-grid" aria-label="Portfolio metrics">
-            <article class="metric-card"><span>Day P/L</span><strong>—</strong><small>Awaiting integration</small></article>
-            <article class="metric-card"><span>Open positions</span><strong>—</strong><small>Awaiting integration</small></article>
-            <article class="metric-card"><span>Buying power</span><strong>—</strong><small>Awaiting integration</small></article>
-            <article class="metric-card"><span>Server state</span><strong>—</strong><small>Awaiting integration</small></article>
+          <div class="metric-grid" aria-label="Live account metrics">
+            <article class="metric-card"><span>Day P/L</span><strong id="dayPlValue">—</strong><small id="dayPlNote">Not provided by API</small></article>
+            <article class="metric-card"><span>Open positions</span><strong id="openPositionsValue">—</strong><small>Reported by MT5 EA</small></article>
+            <article class="metric-card"><span>Equity</span><strong id="equityValue">—</strong><small>Live account equity</small></article>
+            <article class="metric-card"><span>Server state</span><strong id="serverStateValue">—</strong><small id="serverStateNote">Waiting for status</small></article>
           </div>
-          <section class="panel intelligence-panel"><div class="panel-heading"><h2>Session intelligence</h2><span>AWAITING DATA</span></div><div class="signal-row"><span class="signal-mark">⌁</span><div><strong>Signal feed unavailable</strong><p>No market feed is connected. JARVIS does not estimate or simulate trading data.</p></div></div></section>
+          <section class="panel intelligence-panel">
+            <div class="panel-heading"><h2>Live account telemetry</h2><span id="telemetryState">WAITING</span></div>
+            <div class="integration-row"><span>Trading symbol</span><strong id="symbolValue">—</strong></div>
+            <div class="integration-row"><span>Chart timeframe</span><strong id="timeframeValue">—</strong></div>
+            <div class="integration-row"><span>Account balance</span><strong id="balanceValue">—</strong></div>
+            <div class="integration-row"><span>Last EA heartbeat</span><strong id="lastSeenValue">—</strong></div>
+            <div class="signal-row"><span class="signal-mark">⌁</span><div><strong id="heartbeatHeadline">Waiting for MT5 heartbeat</strong><p id="heartbeatNote">Account metrics appear only when returned by the verified EATRADE endpoint.</p></div></div>
+          </section>
         </section>
 
         <section class="view" data-view="positions" aria-labelledby="positionsTitle">
@@ -86,7 +93,7 @@
         <button class="tab" data-target="system" type="button"><span>⋮</span>System</button>
       </nav>
     </main>
-    <dialog id="detailsDialog"><form method="dialog"><button class="dialog-close" aria-label="Close">×</button><p class="section-kicker">INTEGRATION BOUNDARY</p><h2>Live data is intentionally off</h2><p>No API Gateway paths, request methods, authentication rules, or response shapes were available for verification. The dashboard therefore makes no network requests and cannot send start/stop commands.</p><p>Provide the existing public base URL plus each approved route, method, authentication approach, and a redacted example response to enable a capability safely.</p><button class="dialog-button">Understood</button></form></dialog>
+    <dialog id="detailsDialog"><form method="dialog"><button class="dialog-close" aria-label="Close">×</button><p class="section-kicker">INTEGRATION BOUNDARY</p><h2>Read-only EATRADE status</h2><p>The dashboard checks the verified POST /status endpoint every 15 seconds while this page is visible. The MT5 heartbeat is considered stale after 90 seconds without a fresh heartbeat.</p><p>This integration only displays telemetry returned by the API. Day P/L is not supplied by the current response, and trading start/stop controls remain locked.</p><button class="dialog-button">Understood</button></form></dialog>
     <script src="config.js"></script>
     <script src="app.js"></script>
   </body>
