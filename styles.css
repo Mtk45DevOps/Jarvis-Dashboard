@@ -174,3 +174,6 @@ body{
 @media (prefers-reduced-motion:reduce){
   .view.active{animation:none}
 }
+
+/* Six primary sections: keep the mobile navigation evenly spaced. */
+.tabbar{grid-template-columns:repeat(6,minmax(0,1fr))}
