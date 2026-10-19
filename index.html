@@ -49,6 +49,18 @@
           <p class="safety-note"><span>◆</span> Signal display only. Order execution remains disabled during development and testing.</p>
         </section>
 
+        <section class="view" data-view="trades" aria-labelledby="tradesTitle">
+          <div class="heading-row"><div><p class="section-kicker">LIVE EXECUTION</p><h1 id="tradesTitle">EA Trades</h1></div><span class="feed-status" id="tradesFeedState">WAITING FOR EA</span></div>
+          <section class="panel">
+            <div class="panel-heading"><h2>Open EA positions</h2><span id="eaTradesCount">— OPEN</span></div>
+            <p class="feed-explainer">Open positions reported by the connected EA. This view refreshes with the dashboard status every five seconds.</p>
+            <div id="eaTradeCards" class="signal-cards" aria-live="polite">
+              <div class="empty-state"><span class="empty-symbol">◫</span><h3>Waiting for trade data</h3><p>No individual EA trade details have been returned by the current API.</p></div>
+            </div>
+          </section>
+          <p class="safety-note"><span>◆</span> Read-only display. Trades appear only when the API reports them; this tab does not open or manage orders.</p>
+        </section>
+
         <section class="view" data-view="control" aria-labelledby="controlTitle">
           <div class="heading-row"><div><p class="section-kicker">AUTOMATION</p><h1 id="controlTitle">Control</h1></div></div>
           <article class="control-status metal-card"><div><span class="card-label">TRADING SERVICE</span><strong>State unknown</strong><p>Start and stop controls remain locked until their exact authorized API routes are verified.</p></div><span class="locked-badge">LOCKED</span></article>
@@ -59,12 +71,11 @@
           <p class="safety-note"><span>◆</span> Actions will never be enabled from a guessed route. Configuration stays outside the app bundle.</p>
         </section>
 
-          <section class="panel guide-panel"><h2>Connect verified routes</h2><ol><li>Copy <code>config.example.js</code> to <code>config.js</code>.</li><li>Set only the public API URL and routes confirmed in your AWS Console.</li><li>Define the exact method and response mapping for each capability.</li><li>Deploy the static app over HTTPS. Do not put AWS keys, passwords, or session tokens in the app.</li></ol></section>
-        </section>
       </div>
 
-      <nav class="tabbar" aria-label="Signals and control navigation">
+      <nav class="tabbar" aria-label="Signals, EA trades, and control navigation">
         <button class="tab active" data-target="signals" type="button"><span>⌁</span>Signals</button>
+        <button class="tab" data-target="trades" type="button"><span>◫</span>EA Trades</button>
         <button class="tab" data-target="control" type="button"><span>◉</span>Control</button>
       </nav>
     </main>
