@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const config = window.JARVIS_CONFIG || {};
+  const config = window.LEX_CONFIG || {};
   const endpoints = config.endpoints || {};
   const baseUrl = (config.apiBaseUrl || "").replace(/\/+$/, "");
   const statusRoute = endpoints.status;
@@ -131,7 +131,7 @@
       top.append(symbol, side);
       const tf = document.createElement("p");
       tf.className = "signal-timeframe";
-      tf.textContent = (signal.timeframe || signal.entry_timeframe || "Timeframe unavailable") + " · " + (signal.strategy || "JARVIS strategy");
+      tf.textContent = (signal.timeframe || signal.entry_timeframe || "Timeframe unavailable") + " · " + (signal.strategy || "LEX strategy");
       const grid = document.createElement("div");
       grid.className = "signal-level-grid";
       [["Entry", signal.entry], ["Stop loss", signal.sl !== undefined ? signal.sl : signal.stop_loss], ["Take profit", signal.tp !== undefined ? signal.tp : signal.take_profit]].forEach((pair) => {
