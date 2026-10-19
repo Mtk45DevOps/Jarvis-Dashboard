@@ -63,7 +63,7 @@
 
   function showFailure(message) {
     statusText.textContent = message;
-    setDot("#ff5265");
+    setDot("#777777");
     setText("#telemetryState", "API OFFLINE");
     setText(".unavailable-value", "API Offline");
     setText(".hero-action-row span:first-child", "API CONNECTION FAILED");
@@ -181,7 +181,7 @@
       : heartbeatFresh
         ? "EATRADE API online · MT5 EA not connected"
         : "EATRADE API online · MT5 heartbeat stale";
-    setDot(eaConnected ? "#53d89a" : "#ffb454");
+    setDot(eaConnected ? "#d8d8d8" : "#777777");
 
     setText(".unavailable-value", eaConnected ? "Live Monitoring" : "Heartbeat Stale");
     setText(".hero-body p", (data.message || "EATRADE API status verified.") +
@@ -234,7 +234,7 @@
     requestInFlight = true;
     refreshButton.disabled = true;
     statusText.textContent = "Checking EATRADE API…";
-    setDot("#ffb454");
+    setDot("#a6a6a6");
 
     try {
       const response = await fetch(baseUrl + statusRoute.path, {
