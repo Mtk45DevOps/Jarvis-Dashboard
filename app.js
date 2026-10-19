@@ -69,6 +69,7 @@
     setText(".hero-action-row span:first-child", "API CONNECTION FAILED");
     setServerCard("Offline", "Could not verify API");
     renderSignals(lastTelemetry && Array.isArray(lastTelemetry.signals) ? lastTelemetry.signals : []);
+    renderEATrades(lastTelemetry || {});
     setText("#heartbeatHeadline", "Could not refresh EATRADE status");
     setText("#heartbeatNote", "Previously received metrics, if any, are retained until a new response is available.");
   }
@@ -165,6 +166,104 @@
     });
   });
 
+  function renderEATrades(data) {
+    const host = $("#eaTradeCards");
+    if (!host) return;
+
+    // Support only trade arrays actually returned by the status API.
+    const trades = Array.isArray(data?.open_trades) ? data.open_trades
+      : Array.isArray(data?.positions) ? data.positions
+      : Array.isArray(data?.trades) ? data.trades
+      : null;
+
+    host.replaceChildren();
+    if (trades === null) {
+      setText("#eaTradesCount", data && Number.isFinite(Number(data.open_positions))
+        ? countText(data.open_positions) + " OPEN"
+        : "UNAVAILABLE");
+      setText("#tradesFeedState", "DETAILS UNAVAILABLE");
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      const mark = document.createElement("span");
+      mark.className = "empty-symbol";
+      mark.textContent = "◫";
+      const heading = document.createElement("h3");
+      heading.textContent = "Individual trade details unavailable";
+      const paragraph = document.createElement("p");
+      paragraph.textContent = data && data.open_positions !== undefined
+        ? "The API reports an open-position count, but does not return individual position records yet. Add a verified positions array to the status response to display each EA trade."
+        : "The current API response contains no individual EA trade records. No sample trades are shown.";
+      empty.append(mark, heading, paragraph);
+      host.append(empty);
+      return;
+    }
+
+    setText("#eaTradesCount", trades.length + " OPEN");
+    setText("#tradesFeedState", "LIVE TRADE DATA");
+    if (!trades.length) {
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      const mark = document.createElement("span");
+      mark.className = "empty-symbol";
+      mark.textContent = "◫";
+      const heading = document.createElement("h3");
+      heading.textContent = "No open EA trades";
+      const paragraph = document.createElement("p");
+      paragraph.textContent = "The API returned an empty open-trades list.";
+      empty.append(mark, heading, paragraph);
+      host.append(empty);
+      return;
+    }
+
+    trades.slice(0, 100).forEach((trade) => {
+      if (!trade || typeof trade !== "object") return;
+      const card = document.createElement("article");
+      card.className = "signal-card";
+      const top = document.createElement("div");
+      top.className = "signal-card-top";
+      const symbol = document.createElement("strong");
+      symbol.textContent = String(trade.symbol || "Unknown symbol");
+      const sideText = String(trade.direction || trade.side || trade.type || "POSITION").toUpperCase();
+      const side = document.createElement("span");
+      side.className = "signal-side " + (sideText.includes("BUY") ? "buy" : sideText.includes("SELL") ? "sell" : "");
+      side.textContent = sideText;
+      top.append(symbol, side);
+
+      const meta = document.createElement("p");
+      meta.className = "signal-timeframe";
+      const ticket = trade.ticket ?? trade.position_id ?? trade.id;
+      meta.textContent = (ticket !== undefined ? "Ticket " + String(ticket) : "EA position") +
+        (trade.volume !== undefined || trade.lots !== undefined ? " · Volume " + String(trade.volume ?? trade.lots) : "");
+
+      const grid = document.createElement("div");
+      grid.className = "signal-level-grid";
+      [
+        ["Entry", trade.entry_price ?? trade.price_open ?? trade.entry],
+        ["Stop loss", trade.sl ?? trade.stop_loss],
+        ["Take profit", trade.tp ?? trade.take_profit],
+        ["Profit", trade.profit ?? trade.profit_loss]
+      ].forEach(([label, value]) => {
+        const cell = document.createElement("div");
+        const caption = document.createElement("span");
+        caption.textContent = label;
+        const strong = document.createElement("strong");
+        strong.textContent = value === undefined || value === null || value === "" ? "—" : String(value);
+        cell.append(caption, strong);
+        grid.append(cell);
+      });
+
+      const foot = document.createElement("div");
+      foot.className = "signal-card-foot";
+      const state = document.createElement("span");
+      state.textContent = "OPEN";
+      const time = document.createElement("time");
+      time.textContent = formatDateTime(trade.open_time || trade.time || trade.timestamp);
+      foot.append(state, time);
+      card.append(top, meta, grid, foot);
+      host.append(card);
+    });
+  }
+
   function showStatus(data) {
     if (!data || data.status !== "online") {
       showFailure("EATRADE API responded, but its status is not online");
@@ -217,6 +316,7 @@
 
     // Display only genuine signal records returned by the API; never invent demo signals.
     renderSignals(Array.isArray(data.signals) ? data.signals : []);
+    renderEATrades(data);
     // This endpoint does not provide individual position details or daily P/L.
     setText("#positionsCount", "COUNT ONLY");
   }
