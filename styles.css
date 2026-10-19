@@ -183,3 +183,8 @@ body{
 .tabbar{grid-template-columns:repeat(2,minmax(0,1fr));}
 .tab{font-size:12px;gap:4px;}
 .tab span{font-size:19px;}
+
+
+/* EA Trades tab */
+#eaTradeCards .signal-card{border-color:#3d444e;}
+#eaTradeCards .signal-side:empty{display:none;}
