@@ -269,7 +269,13 @@
     if (!("Notification" in window) ||
         !("serviceWorker" in navigator) ||
         !("PushManager" in window)) {
-      button.textContent = "Push notifications unsupported";
+      const isAppleMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      button.textContent = isAppleMobile
+        ? "Install dashboard to enable phone push"
+        : "Push notifications unsupported in this browser";
+      button.title = isAppleMobile
+        ? "On iPhone/iPad: open this page in Safari, tap Share, choose Add to Home Screen, open the installed dashboard, then enable notifications."
+        : "Use a current browser that supports Notifications, Service Workers, and Push API.";
       button.disabled = true;
       return;
     }
@@ -320,7 +326,13 @@
           })
         });
 
-        const result = await response.json();
+        const responseText = await response.text();
+        let result = {};
+        try {
+          result = responseText ? JSON.parse(responseText) : {};
+        } catch (_) {
+          throw new Error(`Push API returned non-JSON (HTTP ${response.status}): ${responseText.slice(0, 160)}`);
+        }
 
         if (!response.ok || !result.ok) {
           throw new Error(
@@ -340,8 +352,11 @@
         );
       } catch (error) {
         console.error("LEX push setup failed:", error);
-        button.textContent = "Push setup failed — retry";
+        const reason = error && error.message ? error.message : String(error);
+        button.textContent = "Push failed — tap to retry";
+        button.title = reason;
         button.disabled = false;
+        window.alert("LEX push setup failed: " + reason);
       }
     });
   }
