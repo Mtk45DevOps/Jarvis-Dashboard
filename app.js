@@ -14,6 +14,9 @@
   const refreshButton = $("#refreshButton");
   let requestInFlight = false;
   let lastTelemetry = null;
+  let tradeBaselineReady = false;
+  let knownTradeIds = new Set();
+  const MAX_KNOWN_TRADE_IDS = 500;
 
   function setDot(color) {
     statusDot.style.background = color;
@@ -166,6 +169,114 @@
     });
   });
 
+  function tradeIdentity(trade) {
+    const id = trade && (trade.ticket ?? trade.position_id ?? trade.id);
+    return id === undefined || id === null || String(id).trim() === ""
+      ? null
+      : String(id);
+  }
+
+  function showTradeToast(trade) {
+    const symbol = String(trade.symbol || "Unknown symbol");
+    const side = String(trade.direction || trade.side || trade.type || "POSITION").toUpperCase();
+    const ticket = tradeIdentity(trade);
+    const message = "New MT5 trade detected: " + side + " " + symbol +
+      (ticket ? " · Ticket " + ticket : "");
+    let toast = $("#tradeNotificationToast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "tradeNotificationToast";
+      toast.className = "trade-notification-toast";
+      toast.setAttribute("role", "status");
+      toast.setAttribute("aria-live", "polite");
+      document.body.append(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add("visible");
+    window.setTimeout(() => toast.classList.remove("visible"), 6500);
+
+    if ("Notification" in window && Notification.permission === "granted") {
+      const options = { body: message, tag: "lex-trade-" + (ticket || symbol + side), icon: "./icons/lex-dragon.svg" };
+      if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.ready
+          .then((registration) => registration.showNotification("LEX · New trade", options))
+          .catch(() => {});
+      } else {
+        try { new Notification("LEX · New trade", options); } catch (_) {}
+      }
+    }
+  }
+
+  function checkForNewTrades(data) {
+    const freshHeartbeat = data.ea_connected === true && heartbeatIsFresh(data);
+    const snapshotFresh = data.positions_snapshot_recent === true;
+    const trades = Array.isArray(data.open_trades) ? data.open_trades
+      : Array.isArray(data.positions) ? data.positions
+      : Array.isArray(data.trades) ? data.trades
+      : null;
+
+    // Never notify from stale position snapshots or when the MT5 EA is disconnected.
+    if (!freshHeartbeat || !snapshotFresh || trades === null) {
+      tradeBaselineReady = false;
+      knownTradeIds = new Set();
+      return;
+    }
+
+    const currentIds = new Set();
+    const newTrades = [];
+    trades.forEach((trade) => {
+      const id = tradeIdentity(trade);
+      if (!id) return;
+      currentIds.add(id);
+      if (tradeBaselineReady && !knownTradeIds.has(id)) newTrades.push(trade);
+    });
+
+    // First fresh snapshot establishes a baseline; it must not alert for old open positions.
+    if (tradeBaselineReady) newTrades.forEach(showTradeToast);
+    tradeBaselineReady = true;
+    knownTradeIds = currentIds;
+    if (knownTradeIds.size > MAX_KNOWN_TRADE_IDS) {
+      knownTradeIds = new Set(Array.from(knownTradeIds).slice(-MAX_KNOWN_TRADE_IDS));
+    }
+  }
+
+  function setupNotifications() {
+    const button = $("#enableNotificationsButton");
+    if (!button) return;
+    if (!("Notification" in window)) {
+      button.textContent = "Notifications unsupported";
+      button.disabled = true;
+      return;
+    }
+    const updateButton = () => {
+      if (Notification.permission === "granted") {
+        button.textContent = "Notifications enabled";
+        button.disabled = true;
+      } else if (Notification.permission === "denied") {
+        button.textContent = "Notifications blocked in browser";
+        button.disabled = true;
+      } else {
+        button.textContent = "Enable trade notifications";
+        button.disabled = false;
+      }
+    };
+    button.addEventListener("click", async () => {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted" && "serviceWorker" in navigator) {
+          const registration = await navigator.serviceWorker.ready;
+          await registration.showNotification("LEX notifications enabled", {
+            body: "LEX can notify you about new trades while the dashboard is open.",
+            tag: "lex-notifications-enabled",
+            icon: "./icons/lex-dragon.svg"
+          });
+        }
+      } catch (_) {}
+      updateButton();
+    });
+    updateButton();
+  }
+
   function renderEATrades(data) {
     const host = $("#eaTradeCards");
     if (!host) return;
@@ -316,6 +427,7 @@
 
     // Display only genuine signal records returned by the API; never invent demo signals.
     renderSignals(Array.isArray(data.signals) ? data.signals : []);
+    checkForNewTrades(data);
     renderEATrades(data);
     // This endpoint does not provide individual position details or daily P/L.
     setText("#positionsCount", "COUNT ONLY");
@@ -382,6 +494,7 @@
 
   refreshButton.disabled = false;
   refreshButton.addEventListener("click", refreshStatus);
+  setupNotifications();
 
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) refreshStatus();
