@@ -8,6 +8,28 @@
   const HEARTBEAT_STALE_MS = 90_000;
   const REFRESH_INTERVAL_MS = 5_000;
 
+  const PUSH_API_URL =
+    "https://tzk9f9aeqi.execute-api.eu-west-2.amazonaws.com/push";
+
+  const VAPID_PUBLIC_KEY =
+    "BPqOmYfHxGySB_LekEh4tOTsNR5apu8WryZEc-UFj44dqE4158A9VLlvFN4Uti0AMsX_O_54hd1zn1Doe907aoo";
+
+  function urlBase64ToUint8Array(base64String) {
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding)
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+
+    const raw = window.atob(base64);
+    const output = new Uint8Array(raw.length);
+
+    for (let i = 0; i < raw.length; i++) {
+      output[i] = raw.charCodeAt(i);
+    }
+
+    return output;
+  }
+
   const $ = (selector) => document.querySelector(selector);
   const statusText = $("#connectionText");
   const statusDot = $("#connectionDot");
@@ -240,41 +262,88 @@
     }
   }
 
-  function setupNotifications() {
+  async function setupNotifications() {
     const button = $("#enableNotificationsButton");
     if (!button) return;
-    if (!("Notification" in window)) {
-      button.textContent = "Notifications unsupported";
+
+    if (!("Notification" in window) ||
+        !("serviceWorker" in navigator) ||
+        !("PushManager" in window)) {
+      button.textContent = "Push notifications unsupported";
       button.disabled = true;
       return;
     }
-    const updateButton = () => {
-      if (Notification.permission === "granted") {
-        button.textContent = "Notifications enabled";
-        button.disabled = true;
-      } else if (Notification.permission === "denied") {
-        button.textContent = "Notifications blocked in browser";
-        button.disabled = true;
-      } else {
-        button.textContent = "Enable trade notifications";
-        button.disabled = false;
-      }
-    };
+
+    if (Notification.permission === "denied") {
+      button.textContent = "Notifications blocked in browser";
+      button.disabled = true;
+      return;
+    }
+
+    button.textContent = "Enable trade notifications";
+    button.disabled = false;
+
     button.addEventListener("click", async () => {
+      button.disabled = true;
+      button.textContent = "Connecting notifications…";
+
       try {
         const permission = await Notification.requestPermission();
-        if (permission === "granted" && "serviceWorker" in navigator) {
-          const registration = await navigator.serviceWorker.ready;
-          await registration.showNotification("LEX notifications enabled", {
-            body: "LEX can notify you about new trades while the dashboard is open.",
-            tag: "lex-notifications-enabled",
-            icon: "./icons/lex-dragon.svg"
+
+        if (permission !== "granted") {
+          button.textContent = "Notification permission not granted";
+          button.disabled = permission === "denied";
+          return;
+        }
+
+        const registration = await navigator.serviceWorker.ready;
+
+        let subscription =
+          await registration.pushManager.getSubscription();
+
+        if (!subscription) {
+          subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey:
+              urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
           });
         }
-      } catch (_) {}
-      updateButton();
+
+        const response = await fetch(PUSH_API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            action: "subscribe",
+            subscription: subscription.toJSON()
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.ok) {
+          throw new Error(
+            result.error || `Subscription failed: HTTP ${response.status}`
+          );
+        }
+
+        button.textContent = "Push notifications connected";
+
+        await registration.showNotification(
+          "LEX · Notifications connected",
+          {
+            body: "This browser is registered for LEX push alerts.",
+            tag: "lex-push-connected",
+            icon: "./icons/lex-dragon.svg"
+          }
+        );
+      } catch (error) {
+        console.error("LEX push setup failed:", error);
+        button.textContent = "Push setup failed — retry";
+        button.disabled = false;
+      }
     });
-    updateButton();
   }
 
   function renderEATrades(data) {
