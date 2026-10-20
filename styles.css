@@ -212,3 +212,36 @@ body{
   font-size:clamp(10px,2.8vw,12px);
 }
 .tabbar .tab span{display:block;line-height:1.2;font-size:19px;}
+
+
+/* LEX dragon artwork background: shown on Signals, EA Trades, and Control.
+   Place the supplied artwork at icons/lex-background.jpg. */
+body{
+  background-color:#06070a;
+  background-image:
+    linear-gradient(180deg,rgba(3,5,8,.68),rgba(3,5,8,.80)),
+    url("./icons/lex-background.jpg");
+  background-position:center center;
+  background-size:cover;
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+}
+.app-shell{background:transparent;}
+.views,.view{background:transparent;}
+.panel,.metal-card,.metric-card,.control-status{
+  background-color:rgba(8,11,16,.82);
+  backdrop-filter:blur(5px);
+}
+@media(max-width:600px){
+  body{background-position:57% center;background-attachment:scroll;}
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    pointer-events:none;
+    background:
+      linear-gradient(180deg,rgba(3,5,8,.68),rgba(3,5,8,.84)),
+      url("./icons/lex-background.jpg") 57% center / cover no-repeat;
+  }
+}
