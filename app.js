@@ -98,7 +98,7 @@
       signalMarketFilter === "all" || classifySignalMarket(item) === signalMarketFilter
     );
     setText("#signalCount", filtered.length + " SIGNAL" + (filtered.length === 1 ? "" : "S"));
-    setText("#signalFeedState", validSignals.length ? "LIVE SIGNAL DATA" : "WAITING FOR EA");
+    setText("#signalFeedState", validSignals.length ? "API SIGNAL RECORDS" : "WAITING FOR EA");
     host.replaceChildren();
 
     if (!filtered.length) {
@@ -198,8 +198,8 @@
       return;
     }
 
-    setText("#eaTradesCount", trades.length + " OPEN");
-    setText("#tradesFeedState", "LIVE TRADE DATA");
+    setText("#eaTradesCount", heartbeatIsFresh(data) && data.ea_connected === true ? trades.length + " OPEN" : "UNVERIFIED");
+    setText("#tradesFeedState", heartbeatIsFresh(data) && data.ea_connected === true ? "LIVE TRADE DATA" : "UNVERIFIED / STALE");
     if (!trades.length) {
       const empty = document.createElement("div");
       empty.className = "empty-state";
@@ -209,7 +209,7 @@
       const heading = document.createElement("h3");
       heading.textContent = "No open EA trades";
       const paragraph = document.createElement("p");
-      paragraph.textContent = "The API returned an empty open-trades list.";
+      paragraph.textContent = heartbeatIsFresh(data) && data.ea_connected === true ? "The connected EA reports no open trades." : "The API returned an empty list, but the MT5 heartbeat is stale or disconnected. Actual positions are unknown.";
       empty.append(mark, heading, paragraph);
       host.append(empty);
       return;
