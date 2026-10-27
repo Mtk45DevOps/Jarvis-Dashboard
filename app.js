@@ -8,37 +8,12 @@
   const HEARTBEAT_STALE_MS = 90_000;
   const REFRESH_INTERVAL_MS = 5_000;
 
-  const PUSH_API_URL =
-    "https://tzk9f9aeqi.execute-api.eu-west-2.amazonaws.com/push";
-
-  const VAPID_PUBLIC_KEY =
-    "BPqOmYfHxGySB_LekEh4tOTsNR5apu8WryZEc-UFj44dqE4158A9VLlvFN4Uti0AMsX_O_54hd1zn1Doe907aoo";
-
-  function urlBase64ToUint8Array(base64String) {
-    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding)
-      .replace(/-/g, "+")
-      .replace(/_/g, "/");
-
-    const raw = window.atob(base64);
-    const output = new Uint8Array(raw.length);
-
-    for (let i = 0; i < raw.length; i++) {
-      output[i] = raw.charCodeAt(i);
-    }
-
-    return output;
-  }
-
   const $ = (selector) => document.querySelector(selector);
   const statusText = $("#connectionText");
   const statusDot = $("#connectionDot");
   const refreshButton = $("#refreshButton");
   let requestInFlight = false;
   let lastTelemetry = null;
-  let tradeBaselineReady = false;
-  let knownTradeIds = new Set();
-  const MAX_KNOWN_TRADE_IDS = 500;
 
   function setDot(color) {
     statusDot.style.background = color;
@@ -191,176 +166,6 @@
     });
   });
 
-  function tradeIdentity(trade) {
-    const id = trade && (trade.ticket ?? trade.position_id ?? trade.id);
-    return id === undefined || id === null || String(id).trim() === ""
-      ? null
-      : String(id);
-  }
-
-  function showTradeToast(trade) {
-    const symbol = String(trade.symbol || "Unknown symbol");
-    const side = String(trade.direction || trade.side || trade.type || "POSITION").toUpperCase();
-    const ticket = tradeIdentity(trade);
-    const message = "New MT5 trade detected: " + side + " " + symbol +
-      (ticket ? " · Ticket " + ticket : "");
-    let toast = $("#tradeNotificationToast");
-    if (!toast) {
-      toast = document.createElement("div");
-      toast.id = "tradeNotificationToast";
-      toast.className = "trade-notification-toast";
-      toast.setAttribute("role", "status");
-      toast.setAttribute("aria-live", "polite");
-      document.body.append(toast);
-    }
-    toast.textContent = message;
-    toast.classList.add("visible");
-    window.setTimeout(() => toast.classList.remove("visible"), 6500);
-
-    if ("Notification" in window && Notification.permission === "granted") {
-      const options = { body: message, tag: "lex-trade-" + (ticket || symbol + side), icon: "./icons/lex-dragon.svg" };
-      if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-        navigator.serviceWorker.ready
-          .then((registration) => registration.showNotification("LEX · New trade", options))
-          .catch(() => {});
-      } else {
-        try { new Notification("LEX · New trade", options); } catch (_) {}
-      }
-    }
-  }
-
-  function checkForNewTrades(data) {
-    const freshHeartbeat = data.ea_connected === true && heartbeatIsFresh(data);
-    const snapshotFresh = data.positions_snapshot_recent === true;
-    const trades = Array.isArray(data.open_trades) ? data.open_trades
-      : Array.isArray(data.positions) ? data.positions
-      : Array.isArray(data.trades) ? data.trades
-      : null;
-
-    // Never notify from stale position snapshots or when the MT5 EA is disconnected.
-    if (!freshHeartbeat || !snapshotFresh || trades === null) {
-      tradeBaselineReady = false;
-      knownTradeIds = new Set();
-      return;
-    }
-
-    const currentIds = new Set();
-    const newTrades = [];
-    trades.forEach((trade) => {
-      const id = tradeIdentity(trade);
-      if (!id) return;
-      currentIds.add(id);
-      if (tradeBaselineReady && !knownTradeIds.has(id)) newTrades.push(trade);
-    });
-
-    // First fresh snapshot establishes a baseline; it must not alert for old open positions.
-    if (tradeBaselineReady) newTrades.forEach(showTradeToast);
-    tradeBaselineReady = true;
-    knownTradeIds = currentIds;
-    if (knownTradeIds.size > MAX_KNOWN_TRADE_IDS) {
-      knownTradeIds = new Set(Array.from(knownTradeIds).slice(-MAX_KNOWN_TRADE_IDS));
-    }
-  }
-
-  async function setupNotifications() {
-    const button = $("#enableNotificationsButton");
-    if (!button) return;
-
-    if (!("Notification" in window) ||
-        !("serviceWorker" in navigator) ||
-        !("PushManager" in window)) {
-      const isAppleMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-      button.textContent = isAppleMobile
-        ? "Install dashboard to enable phone push"
-        : "Push notifications unsupported in this browser";
-      button.title = isAppleMobile
-        ? "On iPhone/iPad: open this page in Safari, tap Share, choose Add to Home Screen, open the installed dashboard, then enable notifications."
-        : "Use a current browser that supports Notifications, Service Workers, and Push API.";
-      button.disabled = true;
-      return;
-    }
-
-    if (Notification.permission === "denied") {
-      button.textContent = "Notifications blocked in browser";
-      button.disabled = true;
-      return;
-    }
-
-    button.textContent = "Enable trade notifications";
-    button.disabled = false;
-
-    button.addEventListener("click", async () => {
-      button.disabled = true;
-      button.textContent = "Connecting notifications…";
-
-      try {
-        const permission = await Notification.requestPermission();
-
-        if (permission !== "granted") {
-          button.textContent = "Notification permission not granted";
-          button.disabled = permission === "denied";
-          return;
-        }
-
-        const registration = await navigator.serviceWorker.ready;
-
-        let subscription =
-          await registration.pushManager.getSubscription();
-
-        if (!subscription) {
-          subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey:
-              urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-          });
-        }
-
-        const response = await fetch(PUSH_API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            action: "subscribe",
-            subscription: subscription.toJSON()
-          })
-        });
-
-        const responseText = await response.text();
-        let result = {};
-        try {
-          result = responseText ? JSON.parse(responseText) : {};
-        } catch (_) {
-          throw new Error(`Push API returned non-JSON (HTTP ${response.status}): ${responseText.slice(0, 160)}`);
-        }
-
-        if (!response.ok || !result.ok) {
-          throw new Error(
-            result.error || `Subscription failed: HTTP ${response.status}`
-          );
-        }
-
-        button.textContent = "Push notifications connected";
-
-        await registration.showNotification(
-          "LEX · Notifications connected",
-          {
-            body: "This browser is registered for LEX push alerts.",
-            tag: "lex-push-connected",
-            icon: "./icons/lex-dragon.svg"
-          }
-        );
-      } catch (error) {
-        console.error("LEX push setup failed:", error);
-        const reason = error && error.message ? error.message : String(error);
-        button.textContent = "Push failed — tap to retry";
-        button.title = reason;
-        button.disabled = false;
-        window.alert("LEX push setup failed: " + reason);
-      }
-    });
-  }
-
   function renderEATrades(data) {
     const host = $("#eaTradeCards");
     if (!host) return;
@@ -511,7 +316,6 @@
 
     // Display only genuine signal records returned by the API; never invent demo signals.
     renderSignals(Array.isArray(data.signals) ? data.signals : []);
-    checkForNewTrades(data);
     renderEATrades(data);
     // This endpoint does not provide individual position details or daily P/L.
     setText("#positionsCount", "COUNT ONLY");
@@ -578,7 +382,6 @@
 
   refreshButton.disabled = false;
   refreshButton.addEventListener("click", refreshStatus);
-  setupNotifications();
 
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) refreshStatus();
