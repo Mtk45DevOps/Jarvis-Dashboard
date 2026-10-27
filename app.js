@@ -392,7 +392,10 @@
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("sw.js").catch(() => {});
+      navigator.serviceWorker.register("sw.js").then(async (registration) => {
+        const subscription = await registration.pushManager?.getSubscription();
+        if (subscription) await subscription.unsubscribe();
+      }).catch(() => {});
     });
   }
 
