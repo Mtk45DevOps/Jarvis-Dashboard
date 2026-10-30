@@ -31,20 +31,7 @@
       </section>
 
       <div class="views">
-        <section class="view active" data-view="trades" aria-labelledby="tradesTitle">
-          <div class="heading-row"><div><p class="section-kicker">LIVE EXECUTION</p><h1 id="tradesTitle">EA Trades</h1></div><span class="feed-status" id="tradesFeedState">WAITING FOR EA</span></div>
-          <section class="panel">
-            <div class="panel-heading"><h2>Open EA positions</h2><span id="eaTradesCount">— OPEN</span></div>
-            <p class="feed-explainer">Open positions reported by the connected EA. This view refreshes every five seconds while the app is open.</p>
-            
-            <div id="eaTradeCards" class="signal-cards" aria-live="polite">
-              <div class="empty-state"><span class="empty-symbol">◫</span><h3>Waiting for trade data</h3><p>No individual EA trade details have been returned by the current API.</p></div>
-            </div>
-          </section>
-          <p class="safety-note"><span>◆</span> Read-only display. Trades appear only when the API reports them; this tab does not open or manage orders.</p>
-        </section>
-
-        <section class="view" data-view="control" aria-labelledby="controlTitle">
+        <section class="view active" data-view="control" aria-labelledby="controlTitle">
           <div class="heading-row"><div><p class="section-kicker">EA MANAGEMENT</p><h1 id="controlTitle">Control</h1></div></div>
           <article class="control-status metal-card"><div><span class="card-label">TRADING SYSTEM ACCESS</span><strong id="vpsStateValue">Not checked</strong><p id="vpsStateNote">Enter your private access token to check system status.</p></div><span class="locked-badge" id="vpsStateBadge">LOCKED</span></article>
           <section class="panel vps-control-panel" aria-label="VPS connection and actions">
@@ -64,15 +51,8 @@
           </section>
           <p class="safety-note"><span>◆</span> Start and stop send authenticated control requests. Stopping the VPS disconnects Windows Remote Desktop and MT5 until it is started again.</p>
         </section>
-          <p class="safety-note"><span>◆</span> Status and account information only. Trading actions are not exposed here unless a verified EA control interface is configured.</p>
-        </section>
 
       </div>
-
-      <nav class="tabbar" aria-label="EA trades and control navigation">
-        <button class="tab active" data-target="trades" type="button"><span>◫</span>EA Trades</button>
-        <button class="tab" data-target="control" type="button"><span>◉</span>Control</button>
-      </nav>
     </main>
     <script src="config.js"></script>
     <script src="app.js"></script>
