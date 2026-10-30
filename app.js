@@ -265,7 +265,110 @@
     }
   }
 
-  // Dashboard controls are intentionally limited to verified EA telemetry.
+  // Private token-based system controls. The token is never persisted.
+  const vpsTokenInput = $("#vpsTokenInput");
+  const vpsStatusButton = $("#vpsStatusButton");
+  const vpsClearTokenButton = $("#vpsClearTokenButton");
+  const vpsStartButton = $("#vpsStartButton");
+  const vpsStopButton = $("#vpsStopButton");
+  let vpsControlToken = "";
+  let vpsCurrentState = "";
+  let vpsRequestInFlight = false;
+
+  function setVpsMessage(message, isError = false) {
+    const element = $("#vpsActionMessage");
+    if (element) {
+      element.textContent = message;
+      element.dataset.state = isError ? "error" : "normal";
+    }
+  }
+
+  function renderVpsState(state, note) {
+    vpsCurrentState = String(state || "").toLowerCase();
+    setText("#vpsStateValue", vpsCurrentState ? vpsCurrentState.toUpperCase() : "Unknown");
+    setText("#vpsStateNote", note || "State returned by AWS Lightsail.");
+    setText("#vpsStateBadge", vpsCurrentState === "running" ? "RUNNING" : vpsCurrentState ? "CHECKED" : "UNKNOWN");
+    const canAct = Boolean(vpsControlToken) && !vpsRequestInFlight;
+    if (vpsStartButton) vpsStartButton.disabled = !canAct || !["stopped", "stopping"].includes(vpsCurrentState);
+    if (vpsStopButton) vpsStopButton.disabled = !canAct || !["running", "starting"].includes(vpsCurrentState);
+  }
+
+  async function vpsRequest(action) {
+    if (vpsRequestInFlight) return;
+    const typedToken = vpsTokenInput ? vpsTokenInput.value.trim() : "";
+    if (typedToken) vpsControlToken = typedToken;
+    if (!vpsControlToken) {
+      setVpsMessage("Enter your private control token first.", true);
+      vpsTokenInput?.focus();
+      return;
+    }
+    if (!baseUrl) {
+      setVpsMessage("The API base URL is not configured.", true);
+      return;
+    }
+    if (action === "stop" && !window.confirm("Stop the trading system now? Windows Remote Desktop and MT5 will disconnect until the VPS is started again.")) return;
+
+    vpsRequestInFlight = true;
+    if (vpsStatusButton) vpsStatusButton.disabled = true;
+    if (vpsStartButton) vpsStartButton.disabled = true;
+    if (vpsStopButton) vpsStopButton.disabled = true;
+    setVpsMessage(action === "status" ? "Checking system status…" : action === "start" ? "Sending start request to system…" : "Sending stop request to system…");
+
+    try {
+      const response = await fetch(baseUrl + "/vps-control", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + vpsControlToken
+        },
+        body: JSON.stringify({ action }),
+        cache: "no-store"
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          throw new Error("Authorization failed. Check that the token matches VPS_CONTROL_TOKEN in control authorizer.");
+        }
+        throw new Error((data && data.error) || ("control request failed (HTTP " + response.status + ")."));
+      }
+      if (data && data.state) renderVpsState(data.state, data.message || ("" + (data.region || "unknown")));
+      if (action === "start" || action === "stop") {
+        setVpsMessage((data && data.message) || ("Request accepted. Current reported state: " + (data && data.state ? data.state : "unknown") + "."));
+      } else {
+        setVpsMessage("system status received successfully.");
+      }
+    } catch (error) {
+      setVpsMessage(error instanceof TypeError
+        ? "Could not reach the control API. Check API Gateway CORS settings and your network."
+        : error.message || "control request failed.", true);
+      if (error instanceof Error && /Authorization failed/.test(error.message)) {
+        renderVpsState("", "Token rejected; enter the current control token.");
+      }
+    } finally {
+      vpsRequestInFlight = false;
+      if (vpsStatusButton) vpsStatusButton.disabled = false;
+      const canAct = Boolean(vpsControlToken) && Boolean(vpsCurrentState);
+      if (vpsStartButton) vpsStartButton.disabled = !canAct || !["stopped", "stopping"].includes(vpsCurrentState);
+      if (vpsStopButton) vpsStopButton.disabled = !canAct || !["running", "starting"].includes(vpsCurrentState);
+    }
+  }
+
+  vpsStatusButton?.addEventListener("click", () => vpsRequest("status"));
+  vpsStartButton?.addEventListener("click", () => vpsRequest("start"));
+  vpsStopButton?.addEventListener("click", () => vpsRequest("stop"));
+  vpsClearTokenButton?.addEventListener("click", () => {
+    vpsControlToken = "";
+    if (vpsTokenInput) vpsTokenInput.value = "";
+    renderVpsState("", "Token cleared. Enter it again to use system controls.");
+    setVpsMessage("Token cleared from this page's memory.");
+  });
+  vpsTokenInput?.addEventListener("input", () => {
+    vpsControlToken = "";
+    renderVpsState("", "Enter token, then check the system status.");
+    setVpsMessage("Token entered in the field is not sent until you click a system action.");
+  });
+
+  // Dashboard navigation.
 
   document.querySelectorAll(".tab").forEach((tab) => {
     tab.addEventListener("click", () => {
