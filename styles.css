@@ -260,3 +260,7 @@ body{
 .vps-action-message[data-state="error"]{border-color:#8b5d5d;color:#ffd0d0}
 #vpsStateValue{text-transform:capitalize}
 @media(max-width:360px){.vps-button-row{grid-template-columns:1fr}}
+
+
+/* Private trading dashboard: two-tab layout, no infrastructure controls. */
+.tabbar{grid-template-columns:repeat(2,minmax(0,1fr))!important}
