@@ -286,7 +286,7 @@
   function renderVpsState(state, note) {
     vpsCurrentState = String(state || "").toLowerCase();
     setText("#vpsStateValue", vpsCurrentState ? vpsCurrentState.toUpperCase() : "Unknown");
-    setText("#vpsStateNote", note || "State returned by AWS Lightsail.");
+    setText("#vpsStateNote", note || "State returned by the control service.");
     setText("#vpsStateBadge", vpsCurrentState === "running" ? "RUNNING" : vpsCurrentState ? "CHECKED" : "UNKNOWN");
     const canAct = Boolean(vpsControlToken) && !vpsRequestInFlight;
     if (vpsStartButton) vpsStartButton.disabled = !canAct || !["stopped", "stopping"].includes(vpsCurrentState);
