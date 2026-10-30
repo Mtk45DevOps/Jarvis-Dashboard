@@ -7,8 +7,7 @@ A dependency-free, iPhone-first static PWA for the existing `Jarvis-Dashboard` r
 - Responsive black/red-neon mobile command-center layout sized for an iPhone 13.
 - Installable PWA shell with offline static asset caching.
 - Explicit loading/integration boundary: no dashboard API requests are made.
-- Disabled start/stop controls; the app cannot affect the Lightsail VPS or any AWS resource.
-- A separate deployment configuration file. It intentionally contains no credentials.
+- Disabled start/stop controls; the app cannot affect the - A separate deployment configuration file. It intentionally contains no credentials.
 
 ## Integration checklist
 
@@ -19,8 +18,7 @@ Before enabling a screen, verify each capability in the existing API Gateway and
 3. A redacted success response and failure response.
 4. Whether a start/stop endpoint triggers real trading or only the service process.
 
-Then copy `config.example.js` to `config.js` and add **only** those confirmed route mappings. Do not include AWS access keys, passwords, session tokens, broker credentials, or private URLs in the static app.
-
+Then copy `config.example.js` to `config.js` and add **only** those confirmed route mappings. Do not include 
 ## Local preview
 
 Serve this directory from any HTTPS-capable static host (or a local static server for development). iPhone installation is available through Safari’s Share → Add to Home Screen after it is served over HTTPS.
