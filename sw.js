@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "lex-shell-v15";
+const CACHE_NAME = "lex-shell-v16";
 const ASSETS = [
   "./",
   "./index.html",
