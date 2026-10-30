@@ -45,16 +45,25 @@
         </section>
 
         <section class="view" data-view="control" aria-labelledby="controlTitle">
-          <div class="heading-row"><div><p class="section-kicker">EA MANAGEMENT</p><h1 id="controlTitle">Control</h1></div><span class="feed-status" id="controlFeedState">WAITING FOR EA</span></div>
-          <article class="control-status metal-card"><div><span class="card-label">TRADING SYSTEM</span><strong id="controlEaState">Not verified</strong><p id="controlEaNote">Live status is shown when the connected EA reports a fresh heartbeat.</p></div><span class="locked-badge" id="controlEaBadge">CHECKING</span></article>
-          <section class="panel">
-            <div class="panel-heading"><h2>Account overview</h2><span>LIVE TELEMETRY</span></div>
-            <div class="integration-row"><span>Account balance</span><strong id="controlBalance">—</strong></div>
-            <div class="integration-row"><span>Account equity</span><strong id="controlEquity">—</strong></div>
-            <div class="integration-row"><span>Open positions</span><strong id="controlPositions">—</strong></div>
-            <div class="integration-row"><span>Trading symbol</span><strong id="controlSymbol">—</strong></div>
-            <div class="integration-row"><span>Last EA heartbeat</span><strong id="controlLastSeen">—</strong></div>
+          <div class="heading-row"><div><p class="section-kicker">EA MANAGEMENT</p><h1 id="controlTitle">Control</h1></div></div>
+          <article class="control-status metal-card"><div><span class="card-label">TRADING SYSTEM ACCESS</span><strong id="vpsStateValue">Not checked</strong><p id="vpsStateNote">Enter your private access token to check system status.</p></div><span class="locked-badge" id="vpsStateBadge">LOCKED</span></article>
+          <section class="panel vps-control-panel" aria-label="VPS connection and actions">
+            <div class="panel-heading"><h2>Secure VPS access</h2><span>MANUAL TOKEN</span></div>
+            <p class="feed-explainer">Your token is held in this page's memory only. It is not saved to GitHub, local storage, or session storage. Clear it when finished.</p>
+            <label class="vps-token-label" for="vpsTokenInput">Private control token</label>
+            <input id="vpsTokenInput" class="vps-token-input" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Paste your private token here" />
+            <div class="vps-button-row">
+              <button id="vpsStatusButton" class="action-button primary" type="button"><span>Check VPS status</span><small>Read-only request</small></button>
+              <button id="vpsClearTokenButton" class="action-button" type="button"><span>Clear token</span><small>Remove from page memory</small></button>
+            </div>
+            <div class="action-stack vps-actions">
+              <button id="vpsStartButton" class="action-button primary" type="button" disabled><span>Start system</span><small>Check status and token first</small></button>
+              <button id="vpsStopButton" class="action-button" type="button" disabled><span>Stop system</span><small>Stops the trading terminal</small></button>
+            </div>
+            <p id="vpsActionMessage" class="vps-action-message" role="status" aria-live="polite">Not connected to the VPS control endpoint.</p>
           </section>
+          <p class="safety-note"><span>◆</span> Start and stop send authenticated control requests. Stopping the VPS disconnects Windows Remote Desktop and MT5 until it is started again.</p>
+        </section>
           <p class="safety-note"><span>◆</span> Status and account information only. Trading actions are not exposed here unless a verified EA control interface is configured.</p>
         </section>
 
