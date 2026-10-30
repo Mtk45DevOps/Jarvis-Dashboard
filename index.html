@@ -10,7 +10,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="icons/lex-dragon.svg" />
     <link rel="apple-touch-icon" href="icons/lex-dragon.svg" />
-    <link rel="stylesheet" href="styles.css?v=lex-dragon-20261020" />
+    <link rel="stylesheet" href="styles.css?v=private-trading-20261030" />
     <title>LEX — Trading Control</title>
   </head>
   <body>
@@ -31,25 +31,7 @@
       </section>
 
       <div class="views">
-        <section class="view active" data-view="signals" aria-labelledby="signalsTitle">
-          <div class="heading-row"><div><p class="section-kicker">STRATEGY OUTPUT</p><h1 id="signalsTitle">Signals</h1></div><span class="feed-status" id="signalFeedState">WAITING FOR EA</span></div>
-          <section class="panel signal-feed-panel">
-            <div class="panel-heading"><h2>Strategy signal feed</h2><span id="signalCount">0 SIGNALS</span></div>
-            <p class="feed-explainer">Signals appear here only when the existing MT5 strategy publishes a confirmed setup. This screen does not create signals or place orders.</p>
-            <div class="market-filter" role="group" aria-label="Filter signals by market">
-              <button class="market-filter-button active" type="button" data-signal-market="all">All markets</button>
-              <button class="market-filter-button" type="button" data-signal-market="synthetics">Synthetics</button>
-              <button class="market-filter-button" type="button" data-signal-market="forex">Forex</button>
-              <button class="market-filter-button" type="button" data-signal-market="gold">Gold</button>
-            </div>
-            <div id="signalCards" class="signal-cards" aria-live="polite">
-              <div class="empty-state"><span class="empty-symbol">⌁</span><h3>Signal feed not connected</h3><p>The current API returns account telemetry, not strategy signals. Connect the EA signal publisher and API response before live setups can appear here.</p></div>
-            </div>
-          </section>
-          <p class="safety-note"><span>◆</span> Signal display only. Order execution remains disabled during development and testing.</p>
-        </section>
-
-        <section class="view" data-view="trades" aria-labelledby="tradesTitle">
+        <section class="view active" data-view="trades" aria-labelledby="tradesTitle">
           <div class="heading-row"><div><p class="section-kicker">LIVE EXECUTION</p><h1 id="tradesTitle">EA Trades</h1></div><span class="feed-status" id="tradesFeedState">WAITING FOR EA</span></div>
           <section class="panel">
             <div class="panel-heading"><h2>Open EA positions</h2><span id="eaTradesCount">— OPEN</span></div>
@@ -63,31 +45,23 @@
         </section>
 
         <section class="view" data-view="control" aria-labelledby="controlTitle">
-          <div class="heading-row"><div><p class="section-kicker">AUTOMATION</p><h1 id="controlTitle">Control</h1></div></div>
-          <article class="control-status metal-card"><div><span class="card-label">LIGHTSAIL VPS · SYNTHVPS</span><strong id="vpsStateValue">Not checked</strong><p id="vpsStateNote">Enter your control token to check the real instance state.</p></div><span class="locked-badge" id="vpsStateBadge">LOCKED</span></article>
-          <section class="panel vps-control-panel" aria-label="VPS connection and actions">
-            <div class="panel-heading"><h2>Secure VPS access</h2><span>MANUAL TOKEN</span></div>
-            <p class="feed-explainer">Your token is held in this page's memory only. It is not saved to GitHub, local storage, or session storage. Clear it when finished.</p>
-            <label class="vps-token-label" for="vpsTokenInput">VPS control token</label>
-            <input id="vpsTokenInput" class="vps-token-input" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Paste your private token here" />
-            <div class="vps-button-row">
-              <button id="vpsStatusButton" class="action-button primary" type="button"><span>Check VPS status</span><small>Read-only request</small></button>
-              <button id="vpsClearTokenButton" class="action-button" type="button"><span>Clear token</span><small>Remove from page memory</small></button>
-            </div>
-            <div class="action-stack vps-actions">
-              <button id="vpsStartButton" class="action-button primary" type="button" disabled><span>Start VPS</span><small>Check status and token first</small></button>
-              <button id="vpsStopButton" class="action-button" type="button" disabled><span>Stop VPS</span><small>Stops Windows and MT5</small></button>
-            </div>
-            <p id="vpsActionMessage" class="vps-action-message" role="status" aria-live="polite">Not connected to the VPS control endpoint.</p>
+          <div class="heading-row"><div><p class="section-kicker">EA MANAGEMENT</p><h1 id="controlTitle">Control</h1></div><span class="feed-status" id="controlFeedState">WAITING FOR EA</span></div>
+          <article class="control-status metal-card"><div><span class="card-label">TRADING SYSTEM</span><strong id="controlEaState">Not verified</strong><p id="controlEaNote">Live status is shown when the connected EA reports a fresh heartbeat.</p></div><span class="locked-badge" id="controlEaBadge">CHECKING</span></article>
+          <section class="panel">
+            <div class="panel-heading"><h2>Account overview</h2><span>LIVE TELEMETRY</span></div>
+            <div class="integration-row"><span>Account balance</span><strong id="controlBalance">—</strong></div>
+            <div class="integration-row"><span>Account equity</span><strong id="controlEquity">—</strong></div>
+            <div class="integration-row"><span>Open positions</span><strong id="controlPositions">—</strong></div>
+            <div class="integration-row"><span>Trading symbol</span><strong id="controlSymbol">—</strong></div>
+            <div class="integration-row"><span>Last EA heartbeat</span><strong id="controlLastSeen">—</strong></div>
           </section>
-          <p class="safety-note"><span>◆</span> Start and stop send real Lightsail commands. Stopping the VPS disconnects Windows Remote Desktop and MT5 until it is started again.</p>
+          <p class="safety-note"><span>◆</span> Status and account information only. Trading actions are not exposed here unless a verified EA control interface is configured.</p>
         </section>
 
       </div>
 
-      <nav class="tabbar" aria-label="Signals, EA trades, and control navigation">
-        <button class="tab active" data-target="signals" type="button"><span>⌁</span>Signals</button>
-        <button class="tab" data-target="trades" type="button"><span>◫</span>EA Trades</button>
+      <nav class="tabbar" aria-label="EA trades and control navigation">
+        <button class="tab active" data-target="trades" type="button"><span>◫</span>EA Trades</button>
         <button class="tab" data-target="control" type="button"><span>◉</span>Control</button>
       </nav>
     </main>
