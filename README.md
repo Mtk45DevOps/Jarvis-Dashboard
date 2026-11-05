@@ -26,3 +26,5 @@ Serve this directory from any HTTPS-capable static host (or a local static serve
 ## Repository handoff
 
 The GitHub connector was not authorized in this workspace and no local clone was present, so these files were prepared as a repository-ready folder rather than committed. Copy its contents into `Jarvis-Dashboard`, commit, and deploy via the repository’s existing static-hosting workflow.
+
+<!-- Pages redeploy trigger: 2026-11-05; no application files changed. -->
